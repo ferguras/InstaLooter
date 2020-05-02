@@ -15,6 +15,7 @@ from requests import Session
 
 from .looters import HashtagLooter, ProfileLooter
 from .pbar import TqdmProgressBar
+from .time import get_times_from_cli
 
 if typing.TYPE_CHECKING:
     from typing import Any, Dict, Mapping, Optional, Text, Type, Union
@@ -172,11 +173,15 @@ class BatchRunner(object):
                                 getpass.getpass('Password for "{}": '.format(username))
                             looter.login(username, password)
 
+                        timeframe=self._get(section_id, 'timeframe');
+                        if timeframe is not None:
+                            timeframe=get_times_from_cli(timeframe)
+
                         n = looter.download(
                             directory,
                             media_count=self._getint(section_id, 'num-to-dl'),
-                            # FIXME: timeframe=self._get(section_id, 'timeframe'),
                             new_only=self._getboolean(section_id, 'new', False),
+                            timeframe=timeframe,
                             pgpbar_cls=None if quiet else TqdmProgressBar,
                             dlpbar_cls=None if quiet else TqdmProgressBar)
 

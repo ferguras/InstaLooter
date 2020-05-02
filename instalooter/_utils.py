@@ -10,6 +10,8 @@ import operator
 import os
 import re
 import typing
+import csv
+import time
 
 import six
 
@@ -33,21 +35,49 @@ class NameGenerator(object):
             'ownerid': media['owner']['id'],
             'username': media['owner'].get('username'),
             'fullname': media['owner'].get('full_name'),
-            'commentscount': media.get('edge_media_to_comment', {}).get('count'),
+            'commentscount': 0,
+            'hashtags': 0,
             'likescount': media.get('edge_media_preview_like', {}).get('count'),
+            'isad': media['is_ad'],
+            'isvideo': media['is_video'],
             'width': media.get('dimensions', {}).get('width'),
             'height': media.get('dimensions', {}).get('height'),
         }  # type: Dict[Text, Any]
 
+        commentscount=0
+        try:
+            comments=media.get('edge_media_preview_comment', {})
+            if comments is not None:
+                commentscount=comments.get('count') or 0
+        except:
+            commentscount=0                   
+        info['commentscount']=commentscount
+
+        hashtags=0
+        try:
+            caption=media.get('edge_media_to_caption', {})
+            edges=caption.get('edges', [])
+            text=edges[0].get('node').get('text')
+            hashtags=text.count('#')
+        except:
+            hashtags=0                   
+        info['hashtags']=hashtags
+
         timestamp = media.get('date') or media.get('taken_at_timestamp')
         if timestamp is not None:
             dt = datetime.datetime.fromtimestamp(timestamp)
-            info['datetime'] = ("{0.year}-{0.month:02d}-{0.day:02d} {0.hour:02d}"
-                "h{0.minute:02d}m{0.second:02d}s{0.microsecond}").format(dt)
-            info['date'] = datetime.date.fromtimestamp(timestamp)
+#            info['datetime'] = ("{0.year}-{0.month:02d}-{0.day:02d} {0.hour:02d}"
+#                "h{0.minute:02d}m{0.second:02d}s{0.microsecond}").format(dt)
+            info['year'] = ("{0.year}").format(dt)
+            info['month'] = ("{0.month:02d}").format(dt)
+            info['day'] = ("{0.day:02d}").format(dt)
+#            info['date'] = datetime.date.fromtimestamp(timestamp)
 
-        return dict(six.moves.filter(
-            operator.itemgetter(1), six.iteritems(info)))
+        time.sleep(0.5)
+
+        return info
+        #return dict(six.moves.filter(
+        #    operator.itemgetter(1), six.iteritems(info)))
 
     def __init__(self, template="{id}"):
         # type: (Text) -> None
@@ -56,6 +86,7 @@ class NameGenerator(object):
     def base(self, media):
         # type: (Mapping[Text, Any]) -> Text
         info = self._get_info(media)
+#        print (info)
         return self.template.format(**info)
 
     def file(self, media, ext=None):

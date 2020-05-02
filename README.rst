@@ -16,7 +16,9 @@ Fork of InstaLooter to collect data from posts
 
 - throtle of 0.5 sec for each request
 
-- added option to export to csv file
+- added option to export to csv file, including batch mode
+
+- fixed timeframe option in batch mode
 
 
 |build| |repo| |versions| |format| |coverage| |doc| |grade| |license|

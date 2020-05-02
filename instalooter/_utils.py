@@ -24,6 +24,7 @@ if typing.TYPE_CHECKING:
 class NameGenerator(object):
     """Generator for filenames using a template.
     """
+    writer=None
 
     @classmethod
     def _get_info(cls, media):
@@ -84,17 +85,18 @@ class NameGenerator(object):
         self.template = template
         self.dump_csv=dump_csv
         if (dump_csv):
-            self.csvfilename=csvfilename+".csv"
-            self.csvfile=open(self.csvfilename, mode='w')
-            self.fieldnames = ['id','ownerid','username','fullname','commentscount','likescount','hashtags','isvideo','isad','year','month','day']
-            self.writer = csv.DictWriter(self.csvfile, fieldnames=self.fieldnames)
-            self.writer.writeheader()
+            if (NameGenerator.writer is None):
+                self.csvfilename=csvfilename+".csv"
+                self.csvfile=open(self.csvfilename, mode='w')
+                self.fieldnames = ['id','ownerid','username','fullname','commentscount','likescount','hashtags','isvideo','isad','year','month','day']
+                NameGenerator.writer = csv.DictWriter(self.csvfile, fieldnames=self.fieldnames)
+                NameGenerator.writer.writeheader()
 
     def base(self, media):
         # type: (Mapping[Text, Any]) -> Text
         info = self._get_info(media)
         if (self.dump_csv):
-          self.writer.writerow(info)        
+          NameGenerator.writer.writerow(info)        
         return self.template.format(**info)
 
     def file(self, media, ext=None):

@@ -159,6 +159,7 @@ class BatchRunner(object):
                             videos_only=self._getboolean(section_id, 'videos-only', False),
                             jobs=self._getint(section_id, 'jobs', 16),
                             template=self._get(section_id, 'template', '{id}'),
+                            csvfilename=self._get(section_id, 'csv', None),
                             dump_json=self._getboolean(section_id, 'dump-json', False),
                             dump_only=self._getboolean(section_id, 'dump-only', False),
                             extended_dump=self._getboolean(section_id, 'extended-dump', False),

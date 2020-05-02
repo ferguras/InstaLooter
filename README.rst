@@ -10,7 +10,7 @@ Fork of InstaLooter to collect data from posts
 
 - fixed commentscount in template
 
-- added is ad, is video, year, month, day
+- added is ad, is video, #hashtags, year, month, day
 
 - removed date
 

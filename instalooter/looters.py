@@ -237,6 +237,7 @@ class InstaLooter(object):
                  dump_json=False,       # type: bool
                  dump_only=False,       # type: bool
                  extended_dump=False,   # type: bool
+                 csvfilename="",	# type: Text
                  session=None           # type: Optional[Session]
                  ):
         # type: (...) -> None
@@ -264,13 +265,18 @@ class InstaLooter(object):
                 in the dump.
             session (~requests.Session or None): a `requests` session,
                 or `None` to create a new one.
+            csv (str): filename of the csv to use,
+            dump_csv (bool): Write data to the csv file
 
         """
         self.add_metadata = add_metadata
         self.get_videos = get_videos or videos_only
         self.videos_only = videos_only
         self.jobs = jobs
-        self.namegen = NameGenerator(template)
+        self.csvfilename = csvfilename
+        dump_csv=csvfilename is not None
+        self.dump_csv = dump_csv
+        self.namegen = NameGenerator(template,dump_csv,csvfilename)
         self.dump_only = dump_only
         self.dump_json = dump_json or dump_only
         self.extended_dump = extended_dump

@@ -31,7 +31,7 @@ class NameGenerator(object):
 
         info = {
             'id': media['id'],
-            'code': media['shortcode'],
+ #           'code': media['shortcode'],
             'ownerid': media['owner']['id'],
             'username': media['owner'].get('username'),
             'fullname': media['owner'].get('full_name'),
@@ -40,8 +40,8 @@ class NameGenerator(object):
             'likescount': media.get('edge_media_preview_like', {}).get('count'),
             'isad': media['is_ad'],
             'isvideo': media['is_video'],
-            'width': media.get('dimensions', {}).get('width'),
-            'height': media.get('dimensions', {}).get('height'),
+#            'width': media.get('dimensions', {}).get('width'),
+#            'height': media.get('dimensions', {}).get('height'),
         }  # type: Dict[Text, Any]
 
         commentscount=0
@@ -74,19 +74,27 @@ class NameGenerator(object):
 #            info['date'] = datetime.date.fromtimestamp(timestamp)
 
         time.sleep(0.5)
-
+        
         return info
         #return dict(six.moves.filter(
         #    operator.itemgetter(1), six.iteritems(info)))
 
-    def __init__(self, template="{id}"):
+    def __init__(self, template="{id}",dump_csv=False, csvfilename="data"):
         # type: (Text) -> None
         self.template = template
+        self.dump_csv=dump_csv
+        if (dump_csv):
+            self.csvfilename=csvfilename+".csv"
+            self.csvfile=open(self.csvfilename, mode='w')
+            self.fieldnames = ['id','ownerid','username','fullname','commentscount','likescount','hashtags','isvideo','isad','year','month','day']
+            self.writer = csv.DictWriter(self.csvfile, fieldnames=self.fieldnames)
+            self.writer.writeheader()
 
     def base(self, media):
         # type: (Mapping[Text, Any]) -> Text
         info = self._get_info(media)
-#        print (info)
+        if (self.dump_csv):
+          self.writer.writerow(info)        
         return self.template.format(**info)
 
     def file(self, media, ext=None):

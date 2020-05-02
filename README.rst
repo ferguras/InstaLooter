@@ -7,11 +7,17 @@ InstaLooter |starme|
 *Not all treasure's silver and gold, mate.*
 
 Fork of InstaLooter to collect data from posts
+
 - fixed commentscount in template
+
 - added is ad, is video, year, month, day
+
 - removed date
+
 - throtle of 0.5 sec for each request
+
 - added option to export to csv file
+
 
 |build| |repo| |versions| |format| |coverage| |doc| |grade| |license|
 |keepachangelog| |saythanks|

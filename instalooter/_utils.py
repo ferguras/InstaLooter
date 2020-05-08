@@ -32,7 +32,7 @@ class NameGenerator(object):
 
         info = {
             'id': media['id'],
- #           'code': media['shortcode'],
+            'code': media['shortcode'],
             'ownerid': media['owner']['id'],
             'username': media['owner'].get('username'),
             'fullname': media['owner'].get('full_name'),
@@ -57,9 +57,11 @@ class NameGenerator(object):
         hashtags=0
         try:
             caption=media.get('edge_media_to_caption', {})
-            edges=caption.get('edges', [])
-            text=edges[0].get('node').get('text')
-            hashtags=text.count('#')
+            if caption is not None:
+                edges=caption.get('edges', [])
+                if edges is not None:
+                    text=edges[0].get('node').get('text')
+                    hashtags=text.count('#')
         except:
             hashtags=0                   
         info['hashtags']=hashtags
@@ -74,7 +76,6 @@ class NameGenerator(object):
             info['day'] = ("{0.day:02d}").format(dt)
 #            info['date'] = datetime.date.fromtimestamp(timestamp)
 
-        time.sleep(0.5)
         
         return info
         #return dict(six.moves.filter(
@@ -88,7 +89,7 @@ class NameGenerator(object):
             if (NameGenerator.writer is None):
                 self.csvfilename=csvfilename+".csv"
                 self.csvfile=open(self.csvfilename, mode='w')
-                self.fieldnames = ['id','ownerid','username','fullname','commentscount','likescount','hashtags','isvideo','isad','year','month','day']
+                self.fieldnames = ['id','code','ownerid','username','fullname','commentscount','likescount','hashtags','isvideo','isad','year','month','day']
                 NameGenerator.writer = csv.DictWriter(self.csvfile, fieldnames=self.fieldnames)
                 NameGenerator.writer.writeheader()
 

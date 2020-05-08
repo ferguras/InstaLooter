@@ -88,9 +88,9 @@ class NameGenerator(object):
         if (dump_csv):
             if (NameGenerator.writer is None):
                 self.csvfilename=csvfilename+".csv"
-                self.csvfile=open(self.csvfilename, mode='w')
+                NameGenerator.csvfile=open(self.csvfilename, mode='w')
                 self.fieldnames = ['id','code','ownerid','username','fullname','commentscount','likescount','hashtags','isvideo','isad','year','month','day']
-                NameGenerator.writer = csv.DictWriter(self.csvfile, fieldnames=self.fieldnames)
+                NameGenerator.writer = csv.DictWriter(NameGenerator.csvfile, fieldnames=self.fieldnames)
                 NameGenerator.writer.writeheader()
 
     def base(self, media):
@@ -98,6 +98,7 @@ class NameGenerator(object):
         info = self._get_info(media)
         if (self.dump_csv):
           NameGenerator.writer.writerow(info)        
+          NameGenerator.csvfile.flush()        
         return self.template.format(**info)
 
     def file(self, media, ext=None):

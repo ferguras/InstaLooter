@@ -15,6 +15,7 @@ import time
 import threading
 import six
 import atexit
+import random
 
 from ._impl import json
 
@@ -79,7 +80,7 @@ class NameGenerator(object):
             info['day'] = ("{0.day:02d}").format(dt)
 #            info['date'] = datetime.date.fromtimestamp(timestamp)
 
-        
+        time.sleep(0.1+0.2/(1+random.random()))
         return info
         #return dict(six.moves.filter(
         #    operator.itemgetter(1), six.iteritems(info)))

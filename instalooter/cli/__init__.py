@@ -139,7 +139,7 @@ def main(argv=None, stream=None):
                 add_metadata=args['--add-metadata'],
                 get_videos=args['--get-videos'],
                 videos_only=args['--videos-only'],
-                jobs=int(args['--jobs']) if args['--jobs'] is not None else 16,
+                jobs=int(args['--jobs']) if args['--jobs'] is not None else 1,
                 template=args['--template'],
                 dump_json=args['--dump-json'],
                 dump_only=args['--dump-only'],

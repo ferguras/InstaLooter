@@ -232,7 +232,7 @@ class InstaLooter(object):
                  add_metadata=False,    # type: bool
                  get_videos=False,      # type: bool
                  videos_only=False,     # type: bool
-                 jobs=16,               # type: int
+                 jobs=1,                # type: int
                  template="{id}",       # type: Text
                  dump_json=False,       # type: bool
                  dump_only=False,       # type: bool

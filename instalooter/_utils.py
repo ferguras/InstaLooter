@@ -12,7 +12,7 @@ import re
 import typing
 import csv
 import time
-
+import threading
 import six
 
 from ._impl import json
@@ -25,6 +25,8 @@ class NameGenerator(object):
     """Generator for filenames using a template.
     """
     writer=None
+    initlock=threading.Lock()
+    csvlock=threading.RLock()
 
     @classmethod
     def _get_info(cls, media):
@@ -83,22 +85,31 @@ class NameGenerator(object):
 
     def __init__(self, template="{id}",dump_csv=False, csvfilename="data"):
         # type: (Text) -> None
-        self.template = template
-        self.dump_csv=dump_csv
-        if (dump_csv):
-            if (NameGenerator.writer is None):
-                self.csvfilename=csvfilename+".csv"
-                NameGenerator.csvfile=open(self.csvfilename, mode='w')
-                self.fieldnames = ['id','code','ownerid','username','fullname','commentscount','likescount','hashtags','isvideo','isad','year','month','day']
-                NameGenerator.writer = csv.DictWriter(NameGenerator.csvfile, fieldnames=self.fieldnames)
-                NameGenerator.writer.writeheader()
+        NameGenerator.initlock.acquire()
+        try:
+          self.template = template
+          self.dump_csv=dump_csv
+          if (dump_csv):
+              if (NameGenerator.writer is None):
+                  self.csvfilename=csvfilename+".csv"
+                  NameGenerator.csvfile=open(self.csvfilename, mode='w')
+                  self.fieldnames = ['id','code','ownerid','username','fullname','commentscount','likescount','hashtags','isvideo','isad','year','month','day']
+                  NameGenerator.writer = csv.DictWriter(NameGenerator.csvfile, fieldnames=self.fieldnames)
+                  NameGenerator.writer.writeheader()
+        finally:
+           NameGenerator.initlock.release()
+
 
     def base(self, media):
         # type: (Mapping[Text, Any]) -> Text
         info = self._get_info(media)
         if (self.dump_csv):
-          NameGenerator.writer.writerow(info)        
-          NameGenerator.csvfile.flush()        
+          NameGenerator.csvlock.acquire()
+          try:
+            NameGenerator.writer.writerow(info)        
+            NameGenerator.csvfile.flush()        
+          finally:
+            NameGenerator.csvlock.release()
         return self.template.format(**info)
 
     def file(self, media, ext=None):

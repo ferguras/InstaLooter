@@ -143,7 +143,7 @@ class BatchRunner(object):
 
         for name, looter_cls in six.iteritems(self._CLS_MAP):
 
-                targets = self.get_targets(self._get(section_id, name))
+                targets = self.get_targets(self._get(section_id, name),section_id)
                 quiet = self._getboolean(
                     section_id, "quiet", self.args.get("--quiet", False))
 
@@ -193,7 +193,7 @@ class BatchRunner(object):
                           traceback.print_exc()
 
 
-    def get_targets(self, raw_string):
+    def get_targets(self, raw_string,section_id):
         # type: (Optional[Text]) -> Dict[Text, Text]
         """Extract targets from a string in 'key: value' format.
         """
@@ -201,6 +201,13 @@ class BatchRunner(object):
         if raw_string is not None:
             for line in raw_string.splitlines():
                 if line:
+                  target=""
+                  directory="."
+                  try:
                     target, directory = line.split(':', 1)
+                  except:
+                    target=line
+                    directory=self._get(section_id, 'directory',".")
+                  finally:
                     targets[target.strip()] = directory.strip()
         return targets

@@ -621,14 +621,16 @@ class InstaLooter(object):
         for media in six.moves.filter(_condition, medias_iter):
           if media is not None:
             # Check if the whole post info is required
-            tries=8;
+            tries=3;
             if self.namegen.needs_extended(media) or media["__typename"] != "GraphImage":
-                medialwhole=media
+                mediawhole=media
                 collect = True
                 while collect and tries>0:
                   tries=tries-1
                   try:
                     mediawhole = self.get_post_info(media['shortcode'])
+                  except:
+                    mediawhole=None
                   finally:
                     if mediawhole is not None:
                       media=mediawhole

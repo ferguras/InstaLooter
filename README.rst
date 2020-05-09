@@ -14,11 +14,17 @@ Fork of InstaLooter to collect data from posts
 
 - removed date
 
-- throtle of 0.5 sec for each request
+- throtle for each request
 
 - added option to export to csv file, including batch mode
 
 - fixed timeframe option in batch mode
+
+- default jobs changed to 1
+
+- directory option in batch mode, no need to specify directory for each user
+
+- fixed error when post not available
 
 
 |build| |repo| |versions| |format| |coverage| |doc| |grade| |license|

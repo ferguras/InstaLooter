@@ -8,7 +8,7 @@ import io
 import getpass
 import logging
 import typing
-
+import traceback
 import six
 import verboselogs
 from requests import Session
@@ -189,6 +189,9 @@ class BatchRunner(object):
 
                     except Exception as exception:
                         logger.error(six.text_type(exception))
+                        if self._getboolean(section_id, 'traceback', False):
+                          traceback.print_exc()
+
 
     def get_targets(self, raw_string):
         # type: (Optional[Text]) -> Dict[Text, Text]

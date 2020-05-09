@@ -14,6 +14,7 @@ import csv
 import time
 import threading
 import six
+import atexit
 
 from ._impl import json
 
@@ -125,6 +126,20 @@ class NameGenerator(object):
         except KeyError:
             return True
 
+    @classmethod
+    def closefiles(cls):
+        try:
+          NameGenerator.initlock.acquire()
+          if NameGenerator.writer is not None:
+            NameGenerator.csvfile.flush()        
+            NameGenerator.csvfile.close()
+        finally:
+            NameGenerator.write=None;        
+                 
+
+@atexit.register
+def goodbye():
+    NameGenerator.closefiles()
 
 class CachedClassProperty(object):
 

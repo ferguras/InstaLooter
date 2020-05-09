@@ -619,13 +619,25 @@ class InstaLooter(object):
         # Queue all media filling the condition
         medias_queued = 0
         for media in six.moves.filter(_condition, medias_iter):
-
+          if media is not None:
             # Check if the whole post info is required
+            tries=8;
             if self.namegen.needs_extended(media) or media["__typename"] != "GraphImage":
-                media = self.get_post_info(media['shortcode'])
-
+                medialwhole=media
+                collect = True
+                while collect and tries>0:
+                  tries=tries-1
+                  try:
+                    mediawhole = self.get_post_info(media['shortcode'])
+                  finally:
+                    if mediawhole is not None:
+                      media=mediawhole
+                      collect=False
+                
+              
+            if tries>0: 
             # Check that sidecar children fit the condition
-            if media['__typename'] == "GraphSidecar":
+              if media['__typename'] == "GraphSidecar":
                 # Check that each node fits the condition
                 for sidecar in media['edge_sidecar_to_children']['edges'][:]:
                     if not _condition(sidecar['node']):
@@ -637,14 +649,14 @@ class InstaLooter(object):
 
             # Check that the file does not exist
             # FIXME: not working well with sidecar
-            if new_only and destination.exists(self.namegen.file(media)):
+              if new_only and destination.exists(self.namegen.file(media)):
                 break
 
             # Put the medias in the queue
-            queue.put(media)
-            medias_queued += 1
+              queue.put(media)
+              medias_queued += 1
 
-            if media_count is not None and medias_queued >= media_count:
+              if media_count is not None and medias_queued >= media_count:
                 break
 
         return medias_queued

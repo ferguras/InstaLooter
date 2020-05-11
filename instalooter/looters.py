@@ -236,7 +236,6 @@ class InstaLooter(object):
                  template="{id}",       # type: Text
                  dump_json=False,       # type: bool
                  dump_only=False,       # type: bool
-                 extended_dump=False,   # type: bool
                  csvfilename="",	# type: Text
                  session=None           # type: Optional[Session]
                  ):
@@ -259,10 +258,6 @@ class InstaLooter(object):
                 JSON file next to the actual image/video.
             dump_only (bool): Only save metadata and discard the actual
                 resource.
-            extended_dump (bool): Attempt to fetch as much metadata as
-                possible, at the cost of more time. Set to `True` if, for
-                instance, you always want the top comments to be downloaded
-                in the dump.
             session (~requests.Session or None): a `requests` session,
                 or `None` to create a new one.
             csv (str): filename of the csv to use,
@@ -279,7 +274,6 @@ class InstaLooter(object):
         self.namegen = NameGenerator(template,dump_csv,csvfilename)
         self.dump_only = dump_only
         self.dump_json = dump_json or dump_only
-        self.extended_dump = extended_dump
         self.session = self._init_session(session)
         atexit.register(self.session.close)
 

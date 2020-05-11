@@ -163,7 +163,6 @@ class BatchRunner(object):
                             csvfilename=self._get(section_id, 'csv', None),
                             dump_json=self._getboolean(section_id, 'dump-json', False),
                             dump_only=self._getboolean(section_id, 'dump-only', False),
-                            extended_dump=self._getboolean(section_id, 'extended-dump', False),
                             session=session)
 
                         if self.parser.has_option(section_id, 'username'):

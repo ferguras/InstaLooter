@@ -26,6 +26,7 @@ Fork of InstaLooter to collect data from posts
 
 - fixed error when post not available
 
+- removed extended option
 
 |build| |repo| |versions| |format| |coverage| |doc| |grade| |license|
 |keepachangelog| |saythanks|

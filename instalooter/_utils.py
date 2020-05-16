@@ -73,17 +73,17 @@ class NameGenerator(object):
         timestamp = media.get('date') or media.get('taken_at_timestamp')
         if timestamp is not None:
             dt = datetime.datetime.fromtimestamp(timestamp)
-#            info['datetime'] = ("{0.year}-{0.month:02d}-{0.day:02d} {0.hour:02d}"
-#                "h{0.minute:02d}m{0.second:02d}s{0.microsecond}").format(dt)
+            info['datetime'] = ("{0.year}-{0.month:02d}-{0.day:02d} {0.hour:02d}"
+                "h{0.minute:02d}m{0.second:02d}s{0.microsecond}").format(dt)
             info['year'] = ("{0.year}").format(dt)
             info['month'] = ("{0.month:02d}").format(dt)
             info['day'] = ("{0.day:02d}").format(dt)
-#            info['date'] = datetime.date.fromtimestamp(timestamp)
+            info['date'] = datetime.date.fromtimestamp(timestamp)
 
         time.sleep(0.1+0.2/(1+random.random()))
-        return info
-        #return dict(six.moves.filter(
-        #    operator.itemgetter(1), six.iteritems(info)))
+#        return info
+        return dict(six.moves.filter(
+            operator.itemgetter(1), six.iteritems(info)))
 
     def __init__(self, template="{id}",dump_csv=False, csvfilename="data"):
         # type: (Text) -> None
@@ -96,7 +96,7 @@ class NameGenerator(object):
                   self.csvfilename=csvfilename+".csv"
                   NameGenerator.csvfile=open(self.csvfilename, mode='w')
                   self.fieldnames = ['id','code','ownerid','username','fullname','commentscount','likescount','hashtags','isvideo','isad','year','month','day']
-                  NameGenerator.writer = csv.DictWriter(NameGenerator.csvfile, fieldnames=self.fieldnames)
+                  NameGenerator.writer = csv.DictWriter(NameGenerator.csvfile, fieldnames=self.fieldnames, dialect='excel', restval='', extrasaction='ignore')
                   NameGenerator.writer.writeheader()
         finally:
            NameGenerator.initlock.release()

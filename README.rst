@@ -12,8 +12,6 @@ Fork of InstaLooter to collect data from posts
 
 - added is ad, is video, #hashtags, year, month, day
 
-- removed date
-
 - throtle for each request
 
 - added option to export to csv file, including batch mode
@@ -22,9 +20,9 @@ Fork of InstaLooter to collect data from posts
 
 - default jobs changed to 1
 
-- directory option in batch mode, no need to specify directory for each user
+- added directory option in batch mode, no more requirement to specify a directory for each user
 
-- fixed error when post not available
+- fixed error when post not available/connection failed
 
 - removed extended option
 

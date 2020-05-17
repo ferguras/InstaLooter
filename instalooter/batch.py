@@ -161,6 +161,8 @@ class BatchRunner(object):
                             jobs=self._getint(section_id, 'jobs', 1),
                             template=self._get(section_id, 'template', '{id}'),
                             csvfilename=self._get(section_id, 'csv', None),
+                            profilecsv=self._get(section_id, 'profilecsv', None),
+                            noposts=self._get(section_id, 'noposts', False),
                             dump_json=self._getboolean(section_id, 'dump-json', False),
                             dump_only=self._getboolean(section_id, 'dump-only', False),
                             session=session)

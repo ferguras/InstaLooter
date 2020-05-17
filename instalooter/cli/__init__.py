@@ -143,7 +143,8 @@ def main(argv=None, stream=None):
                 template=args['--template'],
                 dump_json=args['--dump-json'],
                 dump_only=args['--dump-only'],
-                csvfilename=args['--csv']
+                csvfilename=args['--csv'],
+                profilecsv=args['--profilecsv']
             )
 
             # Attempt to login and extract the timeframe

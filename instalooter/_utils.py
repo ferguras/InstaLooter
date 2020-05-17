@@ -81,7 +81,6 @@ class NameGenerator(object):
             info['date'] = datetime.date.fromtimestamp(timestamp)
 
         time.sleep(0.1+0.2/(1+random.random()))
-#        return info
         return dict(six.moves.filter(
             operator.itemgetter(1), six.iteritems(info)))
 
@@ -135,7 +134,7 @@ class NameGenerator(object):
             NameGenerator.csvfile.flush()        
             NameGenerator.csvfile.close()
         finally:
-            NameGenerator.write=None;        
+            NameGenerator.writer=None;        
                  
 
 @atexit.register

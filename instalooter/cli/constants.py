@@ -55,6 +55,7 @@ HELP = textwrap.dedent(
         -t TIME, --time TIME         The time limit within which to download
                                      pictures and video (see *Time*).
         -c FILENAME, --csv FILENAME  Export template data to a csv file
+        --profilecsv FILENAME        Export profile data to a csv file
                  
     Options - Metadata:
         -m, --add-metadata           Add date and caption metadata to downloaded

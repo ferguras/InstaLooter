@@ -6,13 +6,13 @@ InstaLooter |starme|
 
 *Not all treasure's silver and gold, mate.*
 
-Fork of InstaLooter to collect data from posts
+Fork of InstaLooter to collect (meta)data from posts
 
 - fixed commentscount in template
 
 - added is ad, is video, #hashtags, year, month, day
 
-- throtle for each request
+- more throtle for each request to stay within instragram rate limits
 
 - added option to export to csv file, including batch mode
 
@@ -25,6 +25,8 @@ Fork of InstaLooter to collect data from posts
 - fixed error when post not available/connection failed
 
 - removed extended option
+
+- added option to store profile data in csv file, and noposts option in batch mode
 
 |build| |repo| |versions| |format| |coverage| |doc| |grade| |license|
 |keepachangelog| |saythanks|

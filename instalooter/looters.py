@@ -242,6 +242,8 @@ class InstaLooter(object):
                  dump_json=False,       # type: bool
                  dump_only=False,       # type: bool
                  csvfilename="",	# type: Text
+                 profilecsv=None,       # type: Text
+                 noposts=False,	        # type: Bool
                  session=None           # type: Optional[Session]
                  ):
         # type: (...) -> None
@@ -276,9 +278,11 @@ class InstaLooter(object):
         self.csvfilename = csvfilename
         dump_csv=csvfilename is not None
         self.dump_csv = dump_csv
+        self.profilecsv = profilecsv
         self.namegen = NameGenerator(template,dump_csv,csvfilename)
         self.dump_only = dump_only
         self.dump_json = dump_json or dump_only
+        self.noposts = noposts
         self.session = self._init_session(session)
         atexit.register(self.session.close)
 
@@ -749,10 +753,17 @@ class ProfileLooter(InstaLooter):
 
         """
         if self._owner_id is None:
-            it = ProfileIterator.from_username(self._username, self.session)
+            it = ProfileIterator.from_username(self._username, self.session,self.profilecsv)
             self._owner_id = it.owner_id
+            if self.noposts:
+               time.sleep(.5 + .5 * random.random())  # nosec
+               return None
             return it
-        return ProfileIterator(self._owner_id, self.session, self.rhx)
+        it=ProfileIterator(self._owner_id, self.session, self.rhx,self.profilecsv)
+        if self.noposts:
+          time.sleep(.5 + .5 * random.random())  # nosec
+          return None
+        return it
 
 
 class HashtagLooter(InstaLooter):

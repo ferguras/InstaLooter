@@ -10,6 +10,9 @@ import itertools
 import math
 import time
 import typing
+import csv
+import atexit
+import threading
 
 import six
 from requests import Session
@@ -159,6 +162,10 @@ class ProfileIterator(PageIterator):
     """An iterator over the pages of a user profile.
     """
 
+    writer=None
+    initlock=threading.Lock()
+    csvlock=threading.RLock()
+
     _QUERY_HASH = "42323d64886122307be10013ad2dcc44"
     #_QUERY_HASH = "472f257a40c653c64c666ce877d59d2b"
     _URL = "{}?query_hash={}&variables={{}}".format(PageIterator._BASE_URL, _QUERY_HASH)
@@ -175,8 +182,18 @@ class ProfileIterator(PageIterator):
             raise ValueError("user not found: '{}'".format(username))
 
     @classmethod
-    def from_username(cls, username, session):
-        user_data = cls._user_data(username, session)
+    def closefiles(cls):
+        try:
+          ProfileIterator.initlock.acquire()
+          if ProfileIterator.writer is not None:
+            ProfileIterator.csvfile.flush()        
+            ProfileIterator.csvfile.close()
+        finally:
+            ProfileIterator.writer=None;        
+                 
+    @classmethod
+    def from_username(cls, username, session, csvfilename):
+        user_data = cls._user_data(username, session)              
         if 'ProfilePage' not in user_data['entry_data']:
             raise ValueError("user not found: '{}'".format(username))
         data = user_data['entry_data']['ProfilePage'][0]['graphql']['user']
@@ -184,6 +201,31 @@ class ProfileIterator(PageIterator):
             con_id = next((c.value for c in session.cookies if c.name == "ds_user_id"), None)
             if con_id != data['id']:
                 raise RuntimeError("user '{}' is private".format(username))
+        if csvfilename is not None:
+            ProfileIterator.initlock.acquire()
+            try:
+              if ProfileIterator.writer is None:
+                  cls.csvfilename=csvfilename+".csv"
+                  ProfileIterator.csvfile=open(cls.csvfilename, mode='w')
+                  cls.fieldnames = ['username','userid','fullname','followers','biography','businessaccount']
+                  ProfileIterator.writer = csv.DictWriter(ProfileIterator.csvfile, fieldnames=cls.fieldnames, dialect='excel', restval='', extrasaction='ignore')
+                  ProfileIterator.writer.writeheader()
+            finally:
+               ProfileIterator.initlock.release()
+            if ProfileIterator.writer is not None:
+                info = {}
+                info['username'] = username
+                info['followers'] = data['edge_followed_by']['count']
+                info['biography'] = data['biography']
+                info['fullname'] = data['full_name']
+                info['userid'] = data['id']
+                info['businessaccount'] = data['is_business_account']
+                ProfileIterator.csvlock.acquire()
+                try:
+                  ProfileIterator.writer.writerow(info)        
+                  ProfileIterator.csvfile.flush()        
+                finally:
+                  ProfileIterator.csvlock.release()
         return cls(data['id'], session, user_data.get('rhx_gis', ''))
 
     def __init__(self, owner_id, session, rhx):
@@ -196,3 +238,7 @@ class ProfileIterator(PageIterator):
             "first": self.PAGE_SIZE,
             "after": cursor,
         }
+
+@atexit.register
+def goodbye_profile():
+    ProfileIterator.closefiles()

@@ -207,7 +207,7 @@ class ProfileIterator(PageIterator):
               if ProfileIterator.writer is None:
                   cls.csvfilename=csvfilename+".csv"
                   ProfileIterator.csvfile=open(cls.csvfilename, mode='w')
-                  cls.fieldnames = ['username','userid','fullname','followers','biography','businessaccount']
+                  cls.fieldnames = ['username','userid','fullname','followers','businessaccount']
                   ProfileIterator.writer = csv.DictWriter(ProfileIterator.csvfile, fieldnames=cls.fieldnames, dialect='excel', restval='', extrasaction='ignore')
                   ProfileIterator.writer.writeheader()
             finally:
@@ -216,8 +216,8 @@ class ProfileIterator(PageIterator):
                 info = {}
                 info['username'] = username
                 info['followers'] = data['edge_followed_by']['count']
-                info['biography'] = data['biography']
-                info['fullname'] = data['full_name']
+                info['biography'] = data['biography'].encode('utf-8','ignore')
+                info['fullname'] = data['full_name'].encode('utf-8','ignore')
                 info['userid'] = data['id']
                 info['businessaccount'] = data['is_business_account']
                 ProfileIterator.csvlock.acquire()

@@ -14,7 +14,7 @@ import threading
 import time
 import typing
 import warnings
-
+import os
 import fs
 import six
 from requests import Session
@@ -244,6 +244,8 @@ class InstaLooter(object):
                  csvfilename="",	# type: Text
                  profilecsv=None,       # type: Text
                  noposts=False,	        # type: Bool
+                 rotatecmd=None,	# type: Text
+                 rotateip=0,		# type: int
                  session=None           # type: Optional[Session]
                  ):
         # type: (...) -> None
@@ -276,16 +278,36 @@ class InstaLooter(object):
         self.videos_only = videos_only
         self.jobs = jobs
         self.csvfilename = csvfilename
-        dump_csv=csvfilename is not None
+        dump_csv = csvfilename is not None
         self.dump_csv = dump_csv
         self.profilecsv = profilecsv
         self.namegen = NameGenerator(template,dump_csv,csvfilename)
         self.dump_only = dump_only
         self.dump_json = dump_json or dump_only
         self.noposts = noposts
-        self.session = self._init_session(session)
-        atexit.register(self.session.close)
+        self.rotatecmd = rotatecmd
+        self.rotateip = rotateip
+        if self.rotatecmd is not None:
+          self.jobs = 1
+          self.session = None
+        else:
+          self.session = session
+        self.start_session()
+        atexit.register(self.close_session)
 
+    def close_session(self):
+      if self.session is not None:
+        self.session.close()
+        
+    def start_session(self):      
+        if self.rotatecmd is not None:
+          if self.session is not None:
+            self.close_session()
+          os.system(self.rotatecmd)
+          self.session = self._init_session(None)
+        else:
+          self.session = self._init_session(self.session)
+    
         # Set the default webbrowser user agent
         if self.session.headers['User-Agent'].startswith('python-requests'):
             self.session.headers['User-Agent'] = self._user_agent
@@ -696,6 +718,8 @@ class InstaLooter(object):
                 dump_json=self.dump_json,
                 dump_only=self.dump_only,
                 pbar=pbar,
+                rotatecmd=self.rotatecmd,
+                rotateip=self.rotateip,
                 session=self.session)
             worker.start()
             workers.append(worker)
@@ -761,8 +785,9 @@ class ProfileLooter(InstaLooter):
             return it
         it=ProfileIterator(self._owner_id, self.session, self.rhx,self.profilecsv)
         if self.noposts:
-          time.sleep(.5 + .5 * random.random())  # nosec
-          return None
+            if self.noposts:
+               time.sleep(.5 + .5 * random.random())  # nosec
+               return None
         return it
 
 

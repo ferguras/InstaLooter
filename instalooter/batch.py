@@ -163,6 +163,8 @@ class BatchRunner(object):
                             csvfilename=self._get(section_id, 'csv', None),
                             profilecsv=self._get(section_id, 'profilecsv', None),
                             noposts=self._get(section_id, 'noposts', False),
+                            rotatecmd=self._get(section_id, 'rotatecmd', None),
+                            rotateip=self._get(section_id, 'rotateip', 0),
                             dump_json=self._getboolean(section_id, 'dump-json', False),
                             dump_only=self._getboolean(section_id, 'dump-only', False),
                             session=session)

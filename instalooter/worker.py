@@ -8,7 +8,7 @@ import io
 import operator
 import threading
 import time
-
+import os
 import requests
 import six
 import tenacity
@@ -32,6 +32,8 @@ class InstaDownloader(threading.Thread):
                  add_metadata=False,
                  dump_json=False,
                  dump_only=False,
+                 rotatecmd=None,
+                 rotateip=0,
                  pbar=None,
                  session=None):
 
@@ -46,6 +48,8 @@ class InstaDownloader(threading.Thread):
         self.dump_only = dump_only
         self.dump_json = dump_json or dump_only
         self.add_metadata = add_metadata
+        self.rotatecmd = rotatecmd
+        self.rotateip = rotateip
 
         self._killed = False
         self._downloading = None

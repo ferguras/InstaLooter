@@ -123,12 +123,12 @@ class BatchRunner(object):
         """Run all the jobs specified in the configuration file.
         """
         logger.debug("Creating batch session")
-        session = Session()
+        self.session = Session()
 
         for section_id in self.parser.sections():
-            self.run_job(section_id, session=session)
+            self.run_job(section_id)
 
-    def run_job(self, section_id, session=None):
+    def run_job(self, section_id):
         # type: (Text, Optional[Session]) -> None
         """Run a job as described in the section named ``section_id``.
 
@@ -139,7 +139,10 @@ class BatchRunner(object):
         if not self.parser.has_section(section_id):
             raise KeyError('section not found: {}'.format(section_id))
 
-        session = session or Session()
+        self.session = self.session or Session()
+        self.rotatecmd=self._get(section_id, 'rotatecmd', None)
+        self.rotateip=int(self._get(section_id, 'rotateip', 0))
+        self.rotation=self.rotateip
 
         for name, looter_cls in six.iteritems(self._CLS_MAP):
 
@@ -153,6 +156,17 @@ class BatchRunner(object):
                 for target, directory in six.iteritems(targets):
                     try:
                         logger.info("Downloading {} to {}".format(target, directory))
+                        cmd=self.rotatecmd
+                        noposts=self._get(section_id, 'noposts', False)
+                        if self.rotatecmd is not None:
+                          if noposts:
+                            cmd=None
+                            if self.rotation > 0:
+                              self.rotation = self.rotation-1
+                              if self.rotation < 1:
+                                self.rotation = self.rotateip
+                                cmd = self.rotatecmd
+                            
                         looter = looter_cls(
                             target,
                             add_metadata=self._getboolean(section_id, 'add-metadata', False),
@@ -163,11 +177,13 @@ class BatchRunner(object):
                             csvfilename=self._get(section_id, 'csv', None),
                             profilecsv=self._get(section_id, 'profilecsv', None),
                             noposts=self._get(section_id, 'noposts', False),
-                            rotatecmd=self._get(section_id, 'rotatecmd', None),
+                            rotatecmd=cmd,
                             rotateip=self._get(section_id, 'rotateip', 0),
                             dump_json=self._getboolean(section_id, 'dump-json', False),
                             dump_only=self._getboolean(section_id, 'dump-only', False),
-                            session=session)
+                            session=self.session)
+
+                        self.session=looter.session
 
                         if self.parser.has_option(section_id, 'username'):
                             looter.logout()

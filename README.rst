@@ -28,6 +28,11 @@ Fork of InstaLooter to collect (meta)data from posts
 
 - added option to store profile data in csv file, and noposts option in batch mode
 
+- added rotatecmd option in batch mode. The command is executed as os.system
+  call so that is possible to change IP
+
+- added rotateip option in batch mode. The amount of requests done before rotatecmd is executed
+
 |build| |repo| |versions| |format| |coverage| |doc| |grade| |license|
 |keepachangelog| |saythanks|
 

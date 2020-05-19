@@ -142,7 +142,7 @@ class BatchRunner(object):
         self.session = self.session or Session()
         self.rotatecmd=self._get(section_id, 'rotatecmd', None)
         self.rotateip=int(self._get(section_id, 'rotateip', 0))
-        self.rotation=0
+        self.rotation=1
 
         for name, looter_cls in six.iteritems(self._CLS_MAP):
 
